@@ -27,7 +27,24 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const userInformationCollection = client.db("diagnosticDB").collection("users")   
+    const bannerInfoCollection = client.db("diagnosticDB").collection("banners")   
    
+
+//Banner Post Method
+app.get("/banners", async(req,res)=>{
+  const result = await bannerInfoCollection.find().toArray();
+  res.send(result)
+})
+
+//Banner Post Method
+app.post("/banners", async(req,res)=>{
+  const banners = req.body;
+  const result = await bannerInfoCollection.insertOne(banners)
+  res.send(result)
+})
+
+
+
 // Users Data Get 
 app.get("/users/:email", async(req, res)=>{
   const email = req.params.email;
