@@ -28,21 +28,38 @@ async function run() {
   try {
     const userInformationCollection = client.db("diagnosticDB").collection("users")   
    
+// Users Data Get 
+app.get("/users/:email", async(req, res)=>{
+  const email = req.params.email;
+  const query = {email:email}
+   const users = await userInformationCollection.find(query).toArray();
+   
+   res.send(users)
+})
+
+
+// user admin role check
+
+app.get("/users/admin/:email", async(req,res)=>{
+  const email = req.params.email;
+  const query = {email : email};
+  const user = await userInformationCollection.findOne(query);
+  let admin = false;
+  if(user){
+    admin = user?.role === 'admin'
+  }
+  console.log({ admin });
+  res.send({ admin })
+
+})
+
+  // users Post
  app.post("/users",async(req,res)=>{
     const userInfo = req.body;
     const result = await userInformationCollection.insertOne(userInfo);
     res.send(result)
  })
    
-
- app.get("/users/:email", async(req, res)=>{
-   const email = req.params.email;
-   const query = {email:email}
-    const users = await userInformationCollection.find(query).toArray();
-    
-    res.send(users)
- })
-
 
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
