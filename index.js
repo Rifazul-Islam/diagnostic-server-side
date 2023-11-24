@@ -27,8 +27,21 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const userInformationCollection = client.db("diagnosticDB").collection("users")   
-  
    
+ app.post("/users",async(req,res)=>{
+    const userInfo = req.body;
+    const result = await userInformationCollection.insertOne(userInfo);
+    res.send(result)
+ })
+   
+
+ app.get("/users/:email", async(req, res)=>{
+   const email = req.params.email;
+   const query = {email:email}
+    const users = await userInformationCollection.find(query).toArray();
+    
+    res.send(users)
+ })
 
 
 
