@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
 require('dotenv').config();
 const app = express();
@@ -28,18 +28,51 @@ async function run() {
   try {
     const userInformationCollection = client.db("diagnosticDB").collection("users")   
     const bannerInfoCollection = client.db("diagnosticDB").collection("banners")   
+    const recommendationCollection = client.db("diagnosticDB").collection("recommendation")   
    
 
-//Banner Post Method
+
+
+// get recommendation data
+app.get("/recommendation", async(req,res)=>{
+  const result = await recommendationCollection.find().toArray();
+  res.send(result)
+})
+
+
+
+
+//Banner Get Method
 app.get("/banners", async(req,res)=>{
   const result = await bannerInfoCollection.find().toArray();
   res.send(result)
+})
+
+// Banner Data Get Id Thro
+app.get("/banner/:id", async(req,res)=>{
+
+  const results = await bannerInfoCollection.updateMany({}, {$set: { status: false}})
+
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await bannerInfoCollection.updateOne(query, {$set: {status: true}})
+ 
+
+  res.send( result)
 })
 
 //Banner Post Method
 app.post("/banners", async(req,res)=>{
   const banners = req.body;
   const result = await bannerInfoCollection.insertOne(banners)
+  res.send(result)
+})
+
+// Banner Delete System Implement
+app.delete("/banners/:id", async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id : new ObjectId(id)};
+  const result = await bannerInfoCollection.deleteOne(query)
   res.send(result)
 })
 
@@ -65,7 +98,7 @@ app.get("/users/admin/:email", async(req,res)=>{
   if(user){
     admin = user?.role === 'admin'
   }
-  console.log({ admin });
+
   res.send({ admin })
 
 })
