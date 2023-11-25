@@ -29,7 +29,25 @@ async function run() {
     const userInformationCollection = client.db("diagnosticDB").collection("users")   
     const bannerInfoCollection = client.db("diagnosticDB").collection("banners")   
     const recommendationCollection = client.db("diagnosticDB").collection("recommendation")   
+    const testsCollection = client.db("diagnosticDB").collection("tests")   
    
+
+
+// get a test Data 
+app.get("/tests",async(req,res)=>{
+
+  const result = await testsCollection.find().toArray();
+  res.send(result)
+})
+
+
+// post a new Tests 
+app.post("/tests", async(req,res)=>{
+  const tests = req.body;
+  const result = await testsCollection.insertOne(tests);
+  res.send(result)
+})
+
 
 
 
@@ -76,9 +94,21 @@ app.delete("/banners/:id", async(req,res)=>{
   res.send(result)
 })
 
+// user data get System
+app.get("/users", async(req,res)=>{
+  const result = await userInformationCollection.find().toArray();
+  res.send(result)
+})
 
+// user data get System
+app.get("/users/specific/:id", async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id : new ObjectId(id)}
+  const result = await userInformationCollection.findOne(query)
+  res.send(result)
+})
 
-// Users Data Get 
+// Users Data Get  Email 
 app.get("/users/:email", async(req, res)=>{
   const email = req.params.email;
   const query = {email:email}
