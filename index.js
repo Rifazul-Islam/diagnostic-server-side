@@ -35,10 +35,17 @@ async function run() {
 
 // get a test Data 
 app.get("/tests",async(req,res)=>{
-
   const result = await testsCollection.find().toArray();
   res.send(result)
 })
+
+// get a test data specific Id 
+ app.get("/tests/:id", async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id : new ObjectId(id)}
+  const result = await testsCollection.findOne(query);
+  res.send(result)
+ })
 
 
 // post a new Tests 
@@ -47,6 +54,42 @@ app.post("/tests", async(req,res)=>{
   const result = await testsCollection.insertOne(tests);
   res.send(result)
 })
+
+
+// get put Method Use
+app.put('/test/update/:id', async(req,res)=>{
+  const id = req.params.id;
+  const filter = {_id : new ObjectId(id)};
+  const update = req.body;
+  const options = {upsert : true}
+  const updateDoc = {
+    $set: {
+      image :update?.image,
+      testName: update?.testName,
+      price: update?.price,
+      date: update?.date,
+      description: update?.description,
+      slotsStart: update?.slotsStart,
+      slotsEnd: update?.slotsEnd
+    }
+  }
+
+  const result = await testsCollection.updateOne(filter,updateDoc,options)
+  res.send(result)
+})
+
+
+
+
+// delete Method Use 
+app.delete("/tests/:id", async(req,res)=>{
+  const id = req.params.id ;
+  const query = {_id: new ObjectId(id)};
+  const result = await testsCollection.deleteOne(query)
+  res.send(result)
+})
+
+
 
 
 
@@ -149,11 +192,6 @@ app.get("/users/admin/:email", async(req,res)=>{
   }
 }
 run().catch(console.dir);
-
-
-
-
-
 
 
 
