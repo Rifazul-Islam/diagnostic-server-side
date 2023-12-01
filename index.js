@@ -39,6 +39,21 @@ app.get("/tests",async(req,res)=>{
   res.send(result)
 })
 
+
+// all test pagination data get
+app.get("/tests/pagination",async(req,res)=>{
+  const page = parseInt(req.query.page);
+  const size = parseInt(req.query.size);
+  const result = await testsCollection.find().skip(page * size).limit(size).toArray();
+  res.send(result)
+})
+
+
+
+
+
+
+
 // get a test data specific Id 
  app.get("/tests/:id", async(req,res)=>{
   const id = req.params.id;
@@ -78,6 +93,12 @@ app.put('/test/update/:id', async(req,res)=>{
   res.send(result)
 })
 
+
+// Total Test Number Get
+app.get("/testCount", async(req,res)=>{
+  const count = await testsCollection.estimatedDocumentCount();
+  res.send({count})
+})
 
 
 
