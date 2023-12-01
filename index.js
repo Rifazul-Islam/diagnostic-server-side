@@ -185,6 +185,30 @@ app.get("/users/admin/:email", async(req,res)=>{
    
 
 
+ // put method Emplement
+
+ app.put("/user/update/:id",async(req,res)=>{
+  const id = req.params.id;
+  const filter = {_id: new ObjectId(id)};
+  const update = req.body;
+  const options = {upsert : true}
+  const updateDoc = {
+ $set:{
+  name: update?.name,
+  email: update?.email,
+  bloodGroup: update?.bloodGroup,
+  district: update?.district,
+  upazila: update?.upazila,
+  image: update?.image,
+  role: update?.role
+ }
+  }
+
+ const result = await userInformationCollection.updateOne(filter,updateDoc,options) ;
+ res.send( result)
+ })
+
+
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
